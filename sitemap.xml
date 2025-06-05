@@ -1,16 +1,79 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset
       xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
 
 <url>
   <loc>https://optra.me/</loc>
   <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>1.0</priority>
 </url>
 
+<url>
+  <loc>https://optra.me/about</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/services</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/work</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/lab</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/pulse</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/founder</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/blog</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.8</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/contact</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.9</priority>
+</url>
+
+<url>
+  <loc>https://optra.me/test404</loc>
+  <lastmod>2025-06-05T14:22:22+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.1</priority>
+</url>
 
 </urlset>
