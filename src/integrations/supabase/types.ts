@@ -42,30 +42,33 @@ export type Database = {
       chat_messages: {
         Row: {
           created_at: string
+          encrypted_content: string
           id: string
-          is_read: boolean | null
-          message: string
-          sender_email: string
-          sender_name: string
-          sender_phone: string | null
+          is_upi_request: boolean | null
+          iv: string
+          recipient_id: string | null
+          sender_id: string
+          upi_amount: number | null
         }
         Insert: {
           created_at?: string
+          encrypted_content: string
           id?: string
-          is_read?: boolean | null
-          message: string
-          sender_email: string
-          sender_name: string
-          sender_phone?: string | null
+          is_upi_request?: boolean | null
+          iv: string
+          recipient_id?: string | null
+          sender_id: string
+          upi_amount?: number | null
         }
         Update: {
           created_at?: string
+          encrypted_content?: string
           id?: string
-          is_read?: boolean | null
-          message?: string
-          sender_email?: string
-          sender_name?: string
-          sender_phone?: string | null
+          is_upi_request?: boolean | null
+          iv?: string
+          recipient_id?: string | null
+          sender_id?: string
+          upi_amount?: number | null
         }
         Relationships: []
       }
@@ -93,6 +96,36 @@ export type Database = {
           id?: string
           status?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean | null
+          message: string
+          sender_email: string
+          sender_name: string
+          sender_phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message: string
+          sender_email: string
+          sender_name: string
+          sender_phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          sender_email?: string
+          sender_name?: string
+          sender_phone?: string | null
         }
         Relationships: []
       }
