@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import { Progress } from '../components/ui/progress';
-import { Activity, TrendingUp, Zap, BarChart3, Coffee, Target, Rocket } from 'lucide-react';
+import { Activity, TrendingUp, Zap, BarChart3, Coffee, Target, Rocket, Crown, Gem, Users, Heart } from 'lucide-react';
 
 const Pulse = () => {
   const [metrics, setMetrics] = useState({
     projects: 0,
-    coffeeCups: 0,
+    clients: 0,
     satisfaction: 0,
     growth: 0
   });
@@ -83,18 +82,18 @@ const Pulse = () => {
       }, delay);
     };
 
-    setTimeout(() => animateValue('projects', 47), 200);
-    setTimeout(() => animateValue('coffeeCups', 342), 400);
-    setTimeout(() => animateValue('satisfaction', 100), 600);
-    setTimeout(() => animateValue('growth', 250), 800);
+    setTimeout(() => animateValue('projects', 23), 200);
+    setTimeout(() => animateValue('clients', 23), 400);
+    setTimeout(() => animateValue('satisfaction', 97), 600);
+    setTimeout(() => animateValue('growth', 285), 800);
 
     // Animate progress bars with staggered delays
-    setTimeout(() => animateProgress('projectCompletion', 87, 1000), 0);
-    setTimeout(() => animateProgress('creativityLevel', 95, 1200), 0);
-    setTimeout(() => animateProgress('skillDevelopment', 78, 1400), 0);
-    setTimeout(() => animateProgress('marketPresence', 82, 1600), 0);
-    setTimeout(() => animateProgress('teamProductivity', 91, 1800), 0);
-    setTimeout(() => animateProgress('qualityScore', 96, 2000), 0);
+    setTimeout(() => animateProgress('projectCompletion', 94, 1000), 0);
+    setTimeout(() => animateProgress('creativityLevel', 98, 1200), 0);
+    setTimeout(() => animateProgress('skillDevelopment', 89, 1400), 0);
+    setTimeout(() => animateProgress('marketPresence', 91, 1600), 0);
+    setTimeout(() => animateProgress('teamProductivity', 96, 1800), 0);
+    setTimeout(() => animateProgress('qualityScore', 98, 2000), 0);
     
     setTimeout(() => setIsAnimating(false), 3000);
   }, []);
@@ -104,25 +103,28 @@ const Pulse = () => {
       icon: <Activity className="w-8 h-8" />,
       label: "Active Projects",
       value: metrics.projects,
-      suffix: "+",
+      suffix: "",
       color: "text-blue-400",
-      bgColor: "bg-blue-500/20"
+      bgColor: "bg-gradient-to-br from-blue-500/20 to-cyan-500/20",
+      borderColor: "border-blue-400/30"
     },
     {
-      icon: <Coffee className="w-8 h-8" />,
-      label: "Coffee Consumed",
-      value: metrics.coffeeCups,
-      suffix: " cups",
-      color: "text-amber-400",
-      bgColor: "bg-amber-500/20"
+      icon: <Users className="w-8 h-8" />,
+      label: "Happy Clients",
+      value: metrics.clients,
+      suffix: "",
+      color: "text-emerald-400",
+      bgColor: "bg-gradient-to-br from-emerald-500/20 to-green-500/20",
+      borderColor: "border-emerald-400/30"
     },
     {
-      icon: <Target className="w-8 h-8" />,
+      icon: <Heart className="w-8 h-8" />,
       label: "Satisfaction Rate",
       value: metrics.satisfaction,
       suffix: "%",
-      color: "text-green-400",
-      bgColor: "bg-green-500/20"
+      color: "text-pink-400",
+      bgColor: "bg-gradient-to-br from-pink-500/20 to-rose-500/20",
+      borderColor: "border-pink-400/30"
     },
     {
       icon: <Rocket className="w-8 h-8" />,
@@ -130,7 +132,8 @@ const Pulse = () => {
       value: metrics.growth,
       suffix: "%",
       color: "text-purple-400",
-      bgColor: "bg-purple-500/20"
+      bgColor: "bg-gradient-to-br from-purple-500/20 to-violet-500/20",
+      borderColor: "border-purple-400/30"
     }
   ];
 
@@ -180,14 +183,27 @@ const Pulse = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative overflow-hidden">
       <Navigation />
       
-      <div className="pt-24 pb-16 px-4">
+      {/* Premium background effects */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-blue-900/5 to-pink-900/10 animate-pulse" style={{ animationDuration: '8s' }} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.15),transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(255,107,53,0.15),transparent_50%)]" />
+      
+      <div className="pt-24 pb-16 px-4 relative z-10">
         <div className="max-w-6xl mx-auto">
-          {/* Hero */}
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="flex items-center justify-center gap-3 mb-6">
+          {/* Premium Hero */}
+          <div className="text-center mb-16 animate-fade-in relative">
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-4">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 backdrop-blur-sm px-4 py-2 rounded-full border border-yellow-400/30">
+                <Crown className="w-4 h-4 text-yellow-400 animate-pulse" />
+                <span className="text-xs font-bold text-yellow-400">PREMIUM STUDIO METRICS</span>
+                <Gem className="w-4 h-4 text-yellow-400 animate-pulse" />
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-center gap-3 mb-6 mt-8">
               <Activity className={`w-12 h-12 text-gradient ${isAnimating ? 'animate-bounce' : 'animate-pulse'}`} />
               <h1 className="text-5xl md:text-7xl font-bold text-gradient">
                 Studio Pulse
@@ -198,23 +214,23 @@ const Pulse = () => {
                 <span className="text-2xl animate-bounce" style={{ animationDelay: '0.4s' }}>🚀</span>
               </div>
             </div>
-            <p className="text-xl text-foreground/70 max-w-2xl mx-auto">
-              📊 Real-time insights into our studio's heartbeat. 
+            <p className="text-xl text-foreground/80 max-w-3xl mx-auto leading-relaxed">
+              📊 Real-time insights into our premium studio's heartbeat. 
               Track our journey, growth, and creative impact in the design world.
             </p>
             <div className="mt-4 text-sm text-foreground/50">
               <span className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full animate-pulse">
-                ✅ Live Data
+                ✅ Live Premium Data
               </span>
             </div>
           </div>
 
-          {/* Metrics Grid */}
+          {/* Enhanced Metrics Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {pulseData.map((metric, index) => (
               <div 
                 key={index}
-                className={`glass p-8 rounded-3xl text-center hover:bg-white/10 transition-all duration-500 glow-hover animate-fade-in hover:scale-105 ${metric.bgColor} border border-white/20`}
+                className={`glass p-8 rounded-3xl text-center hover:bg-white/10 transition-all duration-500 glow-hover animate-fade-in hover:scale-105 ${metric.bgColor} border ${metric.borderColor} backdrop-blur-sm shadow-2xl`}
                 style={{ animationDelay: `${index * 0.1}s` }}
                 onClick={() => playPulseSound()}
               >
@@ -232,7 +248,7 @@ const Pulse = () => {
           </div>
 
           {/* Progress Metrics */}
-          <div className="glass p-8 rounded-3xl mb-16 hover:glow-hover transition-all duration-300">
+          <div className="glass p-8 rounded-3xl mb-16 hover:glow-hover transition-all duration-300 backdrop-blur-sm border border-white/20 shadow-2xl">
             <h2 className="text-3xl font-bold text-gradient mb-8 text-center flex items-center justify-center gap-3">
               <BarChart3 className="w-8 h-8 animate-pulse" />
               Performance Metrics
@@ -264,7 +280,7 @@ const Pulse = () => {
           </div>
 
           {/* Current Status */}
-          <div className="glass p-8 rounded-3xl mb-16 hover:glow-hover transition-all duration-300">
+          <div className="glass p-8 rounded-3xl mb-16 hover:glow-hover transition-all duration-300 backdrop-blur-sm border border-white/20 shadow-2xl">
             <h2 className="text-3xl font-bold text-gradient mb-8 text-center flex items-center justify-center gap-3">
               <Zap className="w-8 h-8 animate-spin" style={{ animationDuration: '2s' }} />
               Current Status
@@ -306,22 +322,22 @@ const Pulse = () => {
                 <ul className="space-y-3 text-foreground/80">
                   <li className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all hover:scale-105">
                     <div className="w-3 h-3 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full animate-bounce"></div>
-                    <span>Launched 3 major rebrands this quarter</span>
+                    <span>Launched 5 major rebrands this quarter</span>
                     <span className="text-xs">🎉</span>
                   </li>
                   <li className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all hover:scale-105">
                     <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full animate-bounce"></div>
-                    <span>Expanded service offerings</span>
+                    <span>97% client satisfaction achieved</span>
                     <span className="text-xs">✨</span>
                   </li>
                   <li className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all hover:scale-105">
                     <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-blue-400 rounded-full animate-bounce"></div>
-                    <span>100% client satisfaction maintained</span>
+                    <span>23 premium projects delivered</span>
                     <span className="text-xs">💯</span>
                   </li>
                   <li className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-all hover:scale-105">
                     <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-bounce"></div>
-                    <span>New studio processes implemented</span>
+                    <span>Premium studio processes refined</span>
                     <span className="text-xs">⚙️</span>
                   </li>
                 </ul>
@@ -330,11 +346,11 @@ const Pulse = () => {
           </div>
 
           {/* Availability */}
-          <div className="text-center glass p-12 rounded-3xl hover:glow-hover transition-all duration-300 hover:scale-105">
+          <div className="text-center glass p-12 rounded-3xl hover:glow-hover transition-all duration-300 hover:scale-105 backdrop-blur-sm border border-white/20 shadow-2xl">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
               <h2 className="text-3xl font-bold text-gradient">
-                Currently Available
+                Premium Availability
               </h2>
               <div className="flex gap-1">
                 <span className="text-xl animate-bounce" style={{ animationDelay: '0s' }}>🟢</span>
@@ -343,7 +359,7 @@ const Pulse = () => {
               </div>
             </div>
             <p className="text-xl text-foreground/70 mb-8 max-w-2xl mx-auto">
-              We're actively taking on new projects and would love to hear about your vision. 
+              We're actively taking on premium projects and would love to hear about your vision. 
               Let's create something extraordinary together! ✨
             </p>
             
@@ -353,13 +369,13 @@ const Pulse = () => {
                 className="group flex items-center gap-2 px-8 py-4 bg-optra-gradient text-white font-semibold rounded-full transition-all duration-300 hover:scale-105 glow-hover animate-pulse shadow-2xl"
                 onClick={() => playPulseSound()}
               >
-                Get in Touch
+                Get Premium Consultation
                 <Zap className="w-5 h-5 group-hover:animate-bounce" />
               </a>
               
               <div className="text-sm text-foreground/50 flex items-center gap-2">
                 <Coffee className="w-4 h-4" />
-                Response time: Within 48 hours ⏰
+                Premium response time: Within 24 hours ⏰
               </div>
             </div>
           </div>
