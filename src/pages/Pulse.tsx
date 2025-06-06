@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import { Progress } from '../components/ui/progress';
-import { Activity, TrendingUp, Zap, BarChart3, Coffee, Target, Rocket, Crown, Gem, Users, Heart } from 'lucide-react';
+import { TrendingUp, Zap, BarChart3, Coffee, Target, Rocket, Crown, Gem, Users, Heart } from 'lucide-react';
 
 const Pulse = () => {
   const [metrics, setMetrics] = useState({
-    projects: 0,
     clients: 0,
     satisfaction: 0,
     growth: 0
@@ -82,10 +81,9 @@ const Pulse = () => {
       }, delay);
     };
 
-    setTimeout(() => animateValue('projects', 23), 200);
-    setTimeout(() => animateValue('clients', 23), 400);
-    setTimeout(() => animateValue('satisfaction', 97), 600);
-    setTimeout(() => animateValue('growth', 285), 800);
+    setTimeout(() => animateValue('clients', 23), 200);
+    setTimeout(() => animateValue('satisfaction', 97), 400);
+    setTimeout(() => animateValue('growth', 285), 600);
 
     // Animate progress bars with staggered delays
     setTimeout(() => animateProgress('projectCompletion', 94, 1000), 0);
@@ -99,15 +97,6 @@ const Pulse = () => {
   }, []);
 
   const pulseData = [
-    {
-      icon: <Activity className="w-8 h-8" />,
-      label: "Active Projects",
-      value: metrics.projects,
-      suffix: "",
-      color: "text-blue-400",
-      bgColor: "bg-gradient-to-br from-blue-500/20 to-cyan-500/20",
-      borderColor: "border-blue-400/30"
-    },
     {
       icon: <Users className="w-8 h-8" />,
       label: "Happy Clients",
@@ -204,7 +193,9 @@ const Pulse = () => {
             </div>
             
             <div className="flex items-center justify-center gap-3 mb-6 mt-8">
-              <Activity className={`w-12 h-12 text-gradient ${isAnimating ? 'animate-bounce' : 'animate-pulse'}`} />
+              <div className="w-12 h-12 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center animate-pulse">
+                <Heart className="w-6 h-6 text-white" />
+              </div>
               <h1 className="text-5xl md:text-7xl font-bold text-gradient">
                 Studio Pulse
               </h1>
@@ -226,7 +217,7 @@ const Pulse = () => {
           </div>
 
           {/* Enhanced Metrics Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
             {pulseData.map((metric, index) => (
               <div 
                 key={index}

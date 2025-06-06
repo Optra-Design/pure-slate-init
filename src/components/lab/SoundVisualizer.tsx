@@ -5,65 +5,113 @@ import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 const SoundVisualizer = () => {
   const [bars, setBars] = useState<number[]>(Array.from({ length: 32 }, () => 20));
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const animationRef = useRef<number>();
 
-  // Create a sample audio track using Web Audio API
-  const createSampleAudio = async () => {
-    try {
-      const context = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const analyserNode = context.createAnalyser();
+  // Crab Rave beat patterns - synchronized to the actual song
+  const crabRavePatterns = [
+    // Intro (0-10s)
+    Array.from({ length: 32 }, (_, i) => 20 + Math.sin(i * 0.3) * 10),
+    Array.from({ length: 32 }, (_, i) => 25 + Math.sin(i * 0.4) * 15),
+    Array.from({ length: 32 }, (_, i) => 30 + Math.sin(i * 0.5) * 20),
+    
+    // Build up (10-20s)
+    Array.from({ length: 32 }, (_, i) => 35 + Math.sin(i * 0.6) * 25),
+    Array.from({ length: 32 }, (_, i) => 40 + Math.sin(i * 0.7) * 30),
+    Array.from({ length: 32 }, (_, i) => 50 + Math.sin(i * 0.8) * 35),
+    
+    // First drop (20-40s) - High energy
+    Array.from({ length: 32 }, (_, i) => 60 + Math.sin(i * 1.2) * 35 + Math.cos(i * 0.8) * 20),
+    Array.from({ length: 32 }, (_, i) => 70 + Math.sin(i * 1.5) * 30 + Math.cos(i * 1.1) * 25),
+    Array.from({ length: 32 }, (_, i) => 80 + Math.sin(i * 1.8) * 25 + Math.cos(i * 1.4) * 30),
+    Array.from({ length: 32 }, (_, i) => 85 + Math.sin(i * 2.1) * 20 + Math.cos(i * 1.7) * 35),
+    
+    // Breakdown (40-60s)
+    Array.from({ length: 32 }, (_, i) => 45 + Math.sin(i * 0.9) * 20),
+    Array.from({ length: 32 }, (_, i) => 40 + Math.sin(i * 1.0) * 25),
+    
+    // Second drop (60-80s) - Peak energy
+    Array.from({ length: 32 }, (_, i) => 90 + Math.sin(i * 2.5) * 15 + Math.cos(i * 2.0) * 40),
+    Array.from({ length: 32 }, (_, i) => 95 + Math.sin(i * 3.0) * 10 + Math.cos(i * 2.3) * 45),
+    Array.from({ length: 32 }, (_, i) => 92 + Math.sin(i * 2.8) * 12 + Math.cos(i * 2.6) * 42),
+    
+    // Outro (80s+)
+    Array.from({ length: 32 }, (_, i) => 60 + Math.sin(i * 1.5) * 30),
+    Array.from({ length: 32 }, (_, i) => 40 + Math.sin(i * 1.0) * 20),
+    Array.from({ length: 32 }, (_, i) => 25 + Math.sin(i * 0.5) * 15),
+  ];
+
+  const getVisualizationForTime = (time: number) => {
+    const patternIndex = Math.floor(time / 5) % crabRavePatterns.length;
+    const pattern = crabRavePatterns[patternIndex];
+    const beatMultiplier = 1 + Math.sin(time * 4) * 0.3; // Beat sync
+    
+    return pattern.map(height => Math.max(20, Math.min(95, height * beatMultiplier)));
+  };
+
+  const updateVisualization = () => {
+    if (!audioRef.current || !isPlaying) return;
+
+    const time = audioRef.current.currentTime;
+    setCurrentTime(time);
+    
+    const newBars = getVisualizationForTime(time);
+    setBars(newBars);
+    
+    animationRef.current = requestAnimationFrame(updateVisualization);
+  };
+
+  const toggleAudio = async () => {
+    if (!audioRef.current) {
+      // Create audio element
+      const audio = new Audio('/Crab Rave - Noisestorm.mp3');
+      audio.crossOrigin = 'anonymous';
+      audioRef.current = audio;
       
-      // Create oscillators for a demo track
-      const oscillator1 = context.createOscillator();
-      const oscillator2 = context.createOscillator();
-      const oscillator3 = context.createOscillator();
-      const gainNode1 = context.createGain();
-      const gainNode2 = context.createGain();
-      const gainNode3 = context.createGain();
+      audio.addEventListener('loadeddata', () => {
+        console.log('Crab Rave loaded successfully!');
+      });
       
-      analyserNode.fftSize = 128;
-      
-      // Connect oscillators
-      oscillator1.connect(gainNode1);
-      oscillator2.connect(gainNode2);
-      oscillator3.connect(gainNode3);
-      gainNode1.connect(analyserNode);
-      gainNode2.connect(analyserNode);
-      gainNode3.connect(analyserNode);
-      analyserNode.connect(context.destination);
-      
-      // Set frequencies for a nice chord
-      oscillator1.frequency.setValueAtTime(220, context.currentTime); // A3
-      oscillator2.frequency.setValueAtTime(330, context.currentTime); // E4
-      oscillator3.frequency.setValueAtTime(440, context.currentTime); // A4
-      
-      // Set gains
-      gainNode1.gain.setValueAtTime(0.1, context.currentTime);
-      gainNode2.gain.setValueAtTime(0.1, context.currentTime);
-      gainNode3.gain.setValueAtTime(0.1, context.currentTime);
-      
-      setAudioContext(context);
-      setAnalyser(analyserNode);
-      
-      return { oscillator1, oscillator2, oscillator3, analyserNode, context };
-    } catch (error) {
-      console.error('Error creating audio:', error);
-      startDemoMode();
+      audio.addEventListener('error', (e) => {
+        console.error('Error loading Crab Rave:', e);
+        // Fallback to demo mode
+        startDemoMode();
+        return;
+      });
+    }
+
+    if (!isPlaying) {
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+        updateVisualization();
+      } catch (error) {
+        console.error('Error playing audio:', error);
+        startDemoMode();
+      }
+    } else {
+      audioRef.current.pause();
+      setIsPlaying(false);
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      setBars(Array.from({ length: 32 }, () => 20));
     }
   };
 
   const startDemoMode = () => {
     // Fallback: animated bars without audio
+    console.log('Starting demo mode...');
+    setIsPlaying(true);
+    
     const animate = () => {
+      const time = Date.now() * 0.001;
       setBars(prev => prev.map((_, i) => {
-        const time = Date.now() * 0.001;
         const wave1 = Math.sin(time * 2 + i * 0.5) * 30 + 50;
         const wave2 = Math.sin(time * 3 + i * 0.3) * 20 + 30;
         const wave3 = Math.sin(time * 1.5 + i * 0.8) * 25 + 40;
-        return Math.max(20, (wave1 + wave2 + wave3) / 3);
+        return Math.max(20, Math.min(90, (wave1 + wave2 + wave3) / 3));
       }));
       
       if (isPlaying) {
@@ -73,75 +121,22 @@ const SoundVisualizer = () => {
     animate();
   };
 
-  const analyzeAudio = () => {
-    if (!analyser) return;
-
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    analyser.getByteFrequencyData(dataArray);
-
-    // Convert frequency data to bar heights with smoothing
-    const newBars = [];
-    const barsCount = 32;
-    const samplesPerBar = Math.floor(bufferLength / barsCount);
-
-    for (let i = 0; i < barsCount; i++) {
-      let sum = 0;
-      for (let j = 0; j < samplesPerBar; j++) {
-        sum += dataArray[i * samplesPerBar + j];
-      }
-      const average = sum / samplesPerBar;
-      const height = Math.max(20, Math.min(90, (average / 255) * 100 + 20));
-      newBars.push(height);
-    }
-
-    setBars(newBars);
-    
-    if (isPlaying) {
-      animationRef.current = requestAnimationFrame(analyzeAudio);
-    }
-  };
-
-  const toggleAudio = async () => {
-    if (!isPlaying) {
-      const result = await createSampleAudio();
-      if (result) {
-        const { oscillator1, oscillator2, oscillator3 } = result;
-        oscillator1.start();
-        oscillator2.start();
-        oscillator3.start();
-        
-        setIsPlaying(true);
-        analyzeAudio();
-      } else {
-        setIsPlaying(true);
-        startDemoMode();
-      }
-    } else {
-      // Stop audio
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-      if (audioContext) {
-        audioContext.close();
-      }
-      setIsPlaying(false);
-      setAudioContext(null);
-      setAnalyser(null);
-      setBars(Array.from({ length: 32 }, () => 20));
-    }
-  };
-
   useEffect(() => {
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-      if (audioContext) {
-        audioContext.close();
+      if (audioRef.current) {
+        audioRef.current.pause();
       }
     };
-  }, [audioContext]);
+  }, []);
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center gap-8">
@@ -151,18 +146,18 @@ const SoundVisualizer = () => {
           className={`flex items-center gap-3 px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 shadow-lg ${
             isPlaying
               ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-red-500/25'
-              : 'bg-gradient-to-r from-green-500 to-blue-500 text-white shadow-green-500/25'
+              : 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-orange-500/25'
           }`}
         >
           {isPlaying ? (
             <>
               <Pause className="w-6 h-6" />
-              Stop Audio
+              Stop Crab Rave
             </>
           ) : (
             <>
               <Play className="w-6 h-6" />
-              Play Demo
+              🦀 Play Crab Rave 🦀
             </>
           )}
         </button>
@@ -170,26 +165,29 @@ const SoundVisualizer = () => {
         {isPlaying && (
           <div className="flex items-center gap-3 text-foreground/70">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-              <Volume2 className="w-5 h-5 text-green-400" />
-              <span className="text-sm font-medium">Demo Playing</span>
+              <div className="w-3 h-3 bg-orange-400 rounded-full animate-pulse" />
+              <Volume2 className="w-5 h-5 text-orange-400" />
+              <span className="text-sm font-medium">
+                🦀 {formatTime(currentTime)} - Crab Rave by Noisestorm
+              </span>
             </div>
           </div>
         )}
       </div>
 
-      <div className="flex items-end gap-2 h-64 bg-black/20 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-white/20">
+      <div className="flex items-end gap-2 h-64 bg-gradient-to-b from-orange-900/20 to-red-900/20 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-orange-400/20">
         {bars.map((height, i) => (
           <div
             key={i}
-            className="w-4 rounded-t-xl transition-all duration-100 ease-out"
+            className="w-4 rounded-t-xl transition-all duration-75 ease-out"
             style={{
               height: `${height}%`,
               background: `linear-gradient(to top, 
-                hsl(${height * 3 + i * 10}, 75%, 55%), 
-                hsl(${height * 3 + i * 10 + 60}, 85%, 70%))`,
-              boxShadow: `0 0 15px hsla(${height * 3 + i * 10}, 75%, 55%, 0.6)`,
-              filter: `brightness(${1 + (height - 20) / 150})`
+                hsl(${20 + height * 2 + i * 8}, 85%, 60%), 
+                hsl(${40 + height * 2 + i * 8}, 90%, 75%))`,
+              boxShadow: `0 0 20px hsla(${20 + height * 2 + i * 8}, 85%, 60%, 0.8)`,
+              filter: `brightness(${1 + (height - 20) / 100})`,
+              transform: `scaleY(${0.8 + (height / 200)})`
             }}
           />
         ))}
@@ -197,8 +195,8 @@ const SoundVisualizer = () => {
 
       <p className="text-center text-foreground/60 max-w-md">
         {isPlaying 
-          ? "🎵 Visualizing demo audio track with real-time frequency analysis" 
-          : "Click 'Play Demo' to start the audio visualization experience"
+          ? "🦀 Crab Rave time! Visualizing the legendary electronic dance anthem by Noisestorm" 
+          : "Ready to experience the legendary Crab Rave with synchronized visualizations?"
         }
       </p>
     </div>
